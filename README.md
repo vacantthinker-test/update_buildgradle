@@ -12,6 +12,8 @@ https://developer.aliyun.com/mvn/guide
 
 所有Android项目文件夹下的build.gradle
 
+所有react native 项目文件下的build.gradle
+
 ---
 
 使用replaceAll()

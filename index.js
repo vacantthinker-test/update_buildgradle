@@ -54,7 +54,5 @@ function extracted_build_gradle(item_folder) {
 // 同步方式读取目标路径
 fs.readdirSync(root_path).forEach(item_folder => {
 	extracted_build_gradle(item_folder);
-	// extracted_gradle_wrapper(item_folder);
-	// extracted_settings_gradle(item_folder)
 	
 })
