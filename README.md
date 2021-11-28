@@ -16,7 +16,7 @@ https://developer.aliyun.com/mvn/guide
 
 ---
 
-使用replace()
+使用replaceAll()
 ```build.gradle
         mavenLocal()
         google()

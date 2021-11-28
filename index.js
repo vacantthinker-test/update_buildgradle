@@ -19,9 +19,9 @@ const content_build_gradle = `
 
 function updateContent(build_file_path) {
 	let oldContent = fs.readFileSync(build_file_path, 'utf8');
-	let result = oldContent.replace('mavenLocal()', '')
-	result = result.replace('google()', '')
-	result = result.replace('mavenCentral()', content_build_gradle)
+	let result = oldContent.replaceAll('mavenLocal()', '')
+	result = result.replaceAll('google()', '')
+	result = result.replaceAll('mavenCentral()', content_build_gradle)
 	fs.writeFileSync(build_file_path, Buffer.from(result))
 	
 }
@@ -40,6 +40,7 @@ function extracted_build_gradle(item_folder) {
 				if (err){
 					// console.log('android 不存在 ...')
 				}else {
+					console.log('android文件夹存在 正在更新build.gradle文件中...')
 					let reactnative_build_gradle_file_path = path.join(android_dir_path, filename)
 					updateContent(reactnative_build_gradle_file_path)
 				}
