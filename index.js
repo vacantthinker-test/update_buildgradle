@@ -19,10 +19,9 @@ const content_build_gradle = `
 
 function updateContent(build_file_path) {
 	let oldContent = fs.readFileSync(build_file_path, 'utf8');
-	let result = oldContent
-		.replaceAll('mavenLocal()', '')
-		.replaceAll('google()', '')
-		.replaceAll('mavenCentral()', content_build_gradle)
+	let result = oldContent.replace('mavenLocal()', '')
+	result = result.replace('google()', '')
+	result = result.replace('mavenCentral()', content_build_gradle)
 	fs.writeFileSync(build_file_path, Buffer.from(result))
 	
 }
