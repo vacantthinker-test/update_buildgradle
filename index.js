@@ -6,7 +6,6 @@ const fs = require('fs')
 const root_path = path.dirname(__dirname)
 
 const content_build_gradle = `
-    repositories {
         mavenLocal()
         maven {url 'https://maven.aliyun.com/repository/central'}
         maven {url 'https://maven.aliyun.com/repository/public/'}
@@ -16,67 +15,40 @@ const content_build_gradle = `
         maven {url 'https://maven.aliyun.com/repository/spring-plugin'}
         maven {url 'https://maven.aliyun.com/repository/grails-core'}
         maven {url 'https://maven.aliyun.com/repository/apache-snapshots'}
-    }
 `
 
+function updateContent(build_file_path) {
+	let oldContent = fs.readFileSync(build_file_path, 'utf8');
+	let result = oldContent
+		.replaceAll('mavenLocal()', '')
+		.replaceAll('google()', '')
+		.replaceAll('mavenCentral()', content_build_gradle)
+	fs.writeFileSync(build_file_path, Buffer.from(result))
+	
+}
+const filename = 'build.gradle'
 function extracted_build_gradle(item_folder) {
-	// target_build_gradle_filename
-	// --------------------------------------------------------------------------
-	// 访问一下文件, 如果出错则catch块执行, 如果没错那么执行下面的代码
-	const target_build_gradle_filename = 'build.gradle'
-	let build_gradle_file_path = path.join(root_path, item_folder, target_build_gradle_filename)// 获取 目标文件 所在路径
+	let build_gradle_file_path = path.join(root_path, item_folder, filename)// 获取 目标文件 所在路径
+	
+	// 访问build.gradle
 	fs.access(build_gradle_file_path, err => {
 		if (err) {
-			// console.log('文件不存在, 什么都不做 ...')
-		} else {
-			let oldContent = fs.readFileSync(build_gradle_file_path, 'utf8');
-			let regex = /repositories[\s]*\{[\s]*([^\}]*)\}/g
-			if (regex.test(oldContent)) {
-				// let secondContent = oldContent.match(regex);
-				// console.log(secondContent);
-				
-				let target = oldContent.match(regex)[0];
-				if (target.indexOf('https://maven.aliyun.com') === -1) {
-					let result = oldContent.replaceAll(regex, content_build_gradle);
-					let build_gradle_buffer = Buffer.from(result)
-					fs.writeFileSync(build_gradle_file_path, build_gradle_buffer)
-					console.log(`${item_folder} ${target_build_gradle_filename} 更新完成 ...`)
-					// --------------------------------------------------------------------------
-				} else {
-					console.log(`${item_folder} 已经修改过了 ... `)
+			// console.log('build.gradle文件不存在, 什么都不做 ...')
+			// 查看android文件夹存在么? 查看.flowconfig文件存在么?
+			let flowconfig_file_path = path.join(root_path, item_folder, '.flowconfig')
+			let android_dir_path = path.join(root_path, item_folder, 'android')
+			fs.readdir(android_dir_path, err => { // android文件夹存在, react native项目文件夹
+				if (err){
+					// console.log('android 不存在 ...')
+				}else {
+					let reactnative_build_gradle_file_path = path.join(android_dir_path, filename)
+					updateContent(reactnative_build_gradle_file_path)
 				}
-				
-			}
-			
+			})
+		} else { // 原生Android项目文件夹
+			updateContent(build_gradle_file_path)
 		}
 	})
-}
-
-function extracted_gradle_wrapper(item_folder) {
-	// target_gradle_wrapper_properties_filename
-	// --------------------------------------------------------------------------
-	const target_gradle_wrapper_properties_filename = 'gradle-wrapper.properties'
-	let gradle_wrapper_properties_file_path = path.join(root_path, item_folder, 'gradle', 'wrapper', target_gradle_wrapper_properties_filename)// 获取 目标文件 所在路径
-	fs.accessSync(gradle_wrapper_properties_file_path)
-	let gradle_wrapper_properties_content_path = path.join(__dirname, 'content_gradle-wrapper.properties');
-	let gradle_wrapper_properties_buffer = fs.readFileSync(gradle_wrapper_properties_content_path)
-	fs.writeFileSync(gradle_wrapper_properties_file_path, gradle_wrapper_properties_buffer)
-	console.log(`${item_folder} ${target_gradle_wrapper_properties_filename} done`)
-	
-	// --------------------------------------------------------------------------
-}
-
-function extracted_settings_gradle(item_folder) {
-	// --------------------------------------------------------------------------
-	const target_settings_gradle = 'settings.gradle'
-	let settings_gradle_file_path = path.join(root_path, item_folder, target_settings_gradle)
-	fs.accessSync(settings_gradle_file_path)
-	let source_settings_gradle = fs.readFileSync(settings_gradle_file_path).toString('utf8');
-	let regExp = /dependencyResolutionManagement/
-	console.log(settings_gradle_file_path)
-	console.log(regExp.test(source_settings_gradle))
-	console.log('')
-	// --------------------------------------------------------------------------
 }
 
 // 同步方式读取目标路径

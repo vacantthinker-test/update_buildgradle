@@ -14,17 +14,15 @@ https://developer.aliyun.com/mvn/guide
 
 ---
 
-使用正则表达式查找 repositories { xxx }
+使用replaceAll()
 ```build.gradle
-   repositories {
+        mavenLocal()
         google()
         mavenCentral()
-    }
 ```
 
 替换为如下内容
 ```build.gradle
-    repositories {
         mavenLocal()
         maven {url 'https://maven.aliyun.com/repository/central'}
         maven {url 'https://maven.aliyun.com/repository/public/'}
@@ -34,7 +32,6 @@ https://developer.aliyun.com/mvn/guide
         maven {url 'https://maven.aliyun.com/repository/spring-plugin'}
         maven {url 'https://maven.aliyun.com/repository/grails-core'}
         maven {url 'https://maven.aliyun.com/repository/apache-snapshots'}
-    }
 
 ```
 
