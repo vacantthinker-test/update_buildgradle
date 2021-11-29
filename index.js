@@ -5,7 +5,7 @@ const fs = require('fs')
 // 目标路径 所有Android项目 存放的文件夹
 const root_path = path.dirname(__dirname)
 
-const content_build_gradle = `
+const content_mirror = `
         mavenLocal()
         maven {url 'https://maven.aliyun.com/repository/central'}
         maven {url 'https://maven.aliyun.com/repository/public/'}
@@ -18,42 +18,43 @@ const content_build_gradle = `
         mavenCentral()
 `
 
-function updateContent(build_file_path) {
-	let oldContent = fs.readFileSync(build_file_path, 'utf8');
+function updateContent(target_path) {
+	let oldContent = fs.readFileSync(target_path, 'utf8');
 	let result = oldContent.replaceAll('mavenLocal()', '')
 	result = result.replaceAll('google()', '')
-	result = result.replaceAll('mavenCentral()', content_build_gradle)
-	fs.writeFileSync(build_file_path, Buffer.from(result))
+	result = result.replaceAll('mavenCentral()', content_mirror)
+	fs.writeFileSync(target_path, Buffer.from(result))
 	
 }
-const filename = 'build.gradle'
-function extracted_build_gradle(item_folder) {
-	let build_gradle_file_path = path.join(root_path, item_folder, filename)// 获取 目标文件 所在路径
-	
-	// 访问build.gradle
-	fs.access(build_gradle_file_path, err => {
-		if (err) {
-			// console.log('build.gradle文件不存在, 什么都不做 ...')
-			// 查看android文件夹存在么? 查看.flowconfig文件存在么?
-			let flowconfig_file_path = path.join(root_path, item_folder, '.flowconfig')
-			let android_dir_path = path.join(root_path, item_folder, 'android')
-			fs.readdir(android_dir_path, err => { // android文件夹存在, react native项目文件夹
-				if (err){
-					// console.log('android 不存在 ...')
-				}else {
-					console.log('android文件夹存在 正在更新build.gradle文件中...')
-					let reactnative_build_gradle_file_path = path.join(android_dir_path, filename)
-					updateContent(reactnative_build_gradle_file_path)
-				}
-			})
-		} else { // 原生Android项目文件夹
-			updateContent(build_gradle_file_path)
+
+const build_gradle = "build.gradle"
+const settings_gradle = "settings.gradle"
+
+function update_file(item_folder) {
+	let build_gradle_file_path = path.join(root_path, item_folder, build_gradle)// 获取 目标文件 所在路径
+	let settings_gradle_file_path = path.join(root_path, item_folder, settings_gradle)
+
+	// 访问build.gradle settings.gradle
+	if (fs.existsSync(build_gradle_file_path)) {
+		updateContent(build_gradle_file_path)
+		updateContent(settings_gradle_file_path)
+		
+	} else {
+		// 查看android文件夹存在么? 查看.flowconfig文件存在么?
+		let flowconfig_file_path = path.join(root_path, item_folder, '.flowconfig')
+		let android_dir_path = path.join(root_path, item_folder, 'android')
+		if (fs.existsSync(android_dir_path) && fs.existsSync(flowconfig_file_path)) {
+			// android文件夹存在, react native项目文件夹
+			console.log('android文件夹存在 正在更新build.gradle文件中...')
+			let reactnative_build_gradle_file_path = path.join(android_dir_path, build_gradle)
+			updateContent(reactnative_build_gradle_file_path)
+			updateContent(settings_gradle_file_path)
+			
 		}
-	})
+	}
 }
 
 // 同步方式读取目标路径
 fs.readdirSync(root_path).forEach(item_folder => {
-	extracted_build_gradle(item_folder);
-	
+	update_file(item_folder);
 })

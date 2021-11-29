@@ -8,11 +8,11 @@ https://developer.aliyun.com/mvn/guide
 
 ---
 
-该js 添加aliyun镜像地址至
+该script文件 添加aliyun镜像地址至
 
-所有Android项目文件夹下的build.gradle
+所有Android项目文件夹下的build.gradle settings.gradle
 
-所有react native 项目文件下的build.gradle
+所有react native 项目文件下的build.gradle settings.gradle
 
 ---
 
@@ -34,7 +34,7 @@ https://developer.aliyun.com/mvn/guide
         maven {url 'https://maven.aliyun.com/repository/spring-plugin'}
         maven {url 'https://maven.aliyun.com/repository/grails-core'}
         maven {url 'https://maven.aliyun.com/repository/apache-snapshots'}
-
+        mavenCentral()
 ```
 
 ---
@@ -44,7 +44,8 @@ https://developer.aliyun.com/mvn/guide
 - 3 把当前项目与其他Android项目 并列存放
 - 4 执行index.js文件
     - node index.js
-- 5 所有Android项目文件夹下 build.gradle 都被更新了, 添加了 aliyun maven 镜像地址
+- 5 所有Android项目文件夹下 build.gradle settings.gradle 
+  - 都被更新了, 添加了 aliyun maven 镜像地址
 
 ---
 
