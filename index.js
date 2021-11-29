@@ -15,6 +15,7 @@ const content_build_gradle = `
         maven {url 'https://maven.aliyun.com/repository/spring-plugin'}
         maven {url 'https://maven.aliyun.com/repository/grails-core'}
         maven {url 'https://maven.aliyun.com/repository/apache-snapshots'}
+        mavenCentral()
 `
 
 function updateContent(build_file_path) {
