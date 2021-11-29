@@ -18,11 +18,16 @@ const content_mirror = `
         mavenCentral()
 `
 
+let search_value1 = 'mavenLocal()'
+let search_value2 = 'google()';
+let search_value3 = 'mavenCentral()';
+let replace_value1 = '';
+let unicode = 'utf8';
 function updateContent(target_path) {
-	let oldContent = fs.readFileSync(target_path, 'utf8');
-	let result = oldContent.replaceAll('mavenLocal()', '')
-	result = result.replaceAll('google()', '')
-	result = result.replaceAll('mavenCentral()', content_mirror)
+	let oldContent = fs.readFileSync(target_path, unicode);
+	let result = oldContent.replaceAll(search_value1, replace_value1)
+	result = result.replaceAll(search_value2, replace_value1)
+	result = result.replaceAll(search_value3, content_mirror)
 	fs.writeFileSync(target_path, Buffer.from(result))
 	
 }
